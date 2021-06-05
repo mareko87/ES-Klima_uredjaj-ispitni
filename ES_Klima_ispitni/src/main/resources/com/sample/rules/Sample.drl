@@ -1,0 +1,75 @@
+package com.sample.rules
+ 
+import com.sample.Klima;
+
+
+rule "1. Klima uređaji snage 9000 BTU su odgovarajuće za stan od 50 kvadrata ili manje, ali pod uslovom da se želi hladiti/grejati samo jedna prostorija."
+	when
+		k: Klima(viseProstorija == false, kvadratura <= 50)
+	then
+		k.setSnaga(9000);
+		update(k)
+end
+rule "2. Klima uređaji snage 12000 BTU su odgovarajuće za stan od 50 kvadrata ili manje, ali pod uslovom da se želi hladiti/grejati više prostorija."
+	when
+		k: Klima(viseProstorija == true, kvadratura <= 50)
+	then
+		k.setSnaga(12000);
+		update(k)
+end
+rule "3. Klima uređaji snage 12000 BTU su odgovarajuće za stan između 50 i 75 kvadrata, ali pod uslovom da se želi hladiti/grejati samo jedna prostorija."
+	when
+		k: Klima(viseProstorija == false, kvadratura > 50, kvadratura < 75)
+	then
+		k.setSnaga(12000);
+		update(k)
+end
+rule "4. Klima uređaji snage 18000 BTU su odgovarajuće za stan između 50 i 75 kvadrata, ali pod uslovom da se želi hladiti/grejati više prostorija."
+	when
+		k: Klima(viseProstorija == true, kvadratura > 50, kvadratura < 75)
+	then
+		k.setSnaga(18000);
+		update(k)
+end
+rule "5. Klima uređaji snage 18000 BTU su odgovarajuće za stan od 75 kvadrata ili više, bez obzira na to koliko će se prostorija hladiti/grejati."
+	when
+		k: Klima(kvadratura >= 75)
+	then
+		k.setSnaga(18000);
+		update(k)
+end
+rule "6.1 Podrazumeva se da će preporučena klima biti obična (zidna), osim ako se hladi/greje više prostorija odjednom, a nije moguća ugradnja na zid. U tom slučaju se preporučuje pokretni klima uređaj iste snage."
+	when
+		k: Klima(viseProstorija == true, mogucaUgradnjaNaZid == false)
+	then
+		k.setTip("pokretna");
+		update(k)
+end
+rule "6.2 Podrazumeva se da će preporučena klima biti obična (zidna), osim ako se hladi/greje jedna prostorija, a nije moguća ugradnja na zid. U tom slučaju se preporučuje prozorski klima uređaj iste snage."
+	when
+		k: Klima(viseProstorija == false, mogucaUgradnjaNaZid == false)
+	then
+		k.setTip("prozorska");
+		update(k)
+end
+rule "6.3 Podrazumeva se da će preporučena klima biti obična (zidna), ako nisu ispunjeni uslovi u pravilima 6.1 i 6.2."
+	when
+		k: Klima(tip == null)
+	then
+		k.setTip("zidna    ");
+		update(k)
+end
+rule "8. Klima mora da ima i inverter ako će se podjednako ili pretežno koristiti za grejanje (kao i za hlađenje). Klima ne treba da ima inverter ako će se retko koristiti za grejanje."
+	when
+		k: Klima(zaGrejanje == true)
+	then
+		k.setImaInverter(true);
+		update(k)
+end
+rule "9. Klima mora da ima i inverter ako će se koristiti zimi za grejanje pri spoljnim temperaturama manjim od -5  stepeni celzijusa."
+	when
+		k: Klima(zaGrejanjeMinusPet == true)
+	then
+		k.setImaInverter(true);
+		update(k)
+end
