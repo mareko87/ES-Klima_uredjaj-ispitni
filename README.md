@@ -1,5 +1,5 @@
 # ES-Klima_uredjaj-ispitni
-Primer ispitnog zadatka - ekspetni sistemi
+Primer ispitnog zadatka - ekspertni sistemi
 
 
 Originalna verzija zadatka je na adresi Git repozitorijuma predmeta Inteligentni sistemi:
